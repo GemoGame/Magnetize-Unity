@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float pullForce = 100f;
-    public float rotateSpeed = 360f;
+    private float onRotationSpeed = 0f;
+    public float rotateSpeed = 3600f;
     private GameObject closestTower;
     private GameObject hookedTower;
     private bool isPulled = false;
@@ -15,6 +16,13 @@ public class PlayerController : MonoBehaviour
     private AudioSource myAudio;
     private bool isCrashed = false;
     private Vector2 startPosition;
+    public GameObject HookedTower{
+        get{return hookedTower;}
+    }
+    public void setHookedTower(GameObject tower)
+    {
+        hookedTower = tower;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -82,14 +90,16 @@ public class PlayerController : MonoBehaviour
             closestTower.GetComponent<SpriteRenderer>().color = Color.white;
             closestTower = null;
             hookedTower = null;
+            isPulled = false;
         }
     }
 
     void Update()
     {
         //Move the object
+        onRotationSpeed = 0f;
         rb2d.velocity = -transform.up * moveSpeed;
-        if (Input.GetKey(KeyCode.Z) && !isPulled)
+        if ((Input.GetKey(KeyCode.Z) || (Input.GetKey(KeyCode.X))) && !isPulled)
         {
             Debug.Log("Z Pressed, hooking the object ...");
             if (closestTower != null && hookedTower == null)
@@ -98,21 +108,22 @@ public class PlayerController : MonoBehaviour
             }
             if (hookedTower)
             {
-                float distance = Vector2.Distance(transform.position, hookedTower.transform.position);
+                if(Input.GetKey(KeyCode.Z))
+                {
+                    movePlayer(rotateSpeed);
+                }
 
-                //Gravitation toward tower
-                Vector3 pullDirection = (hookedTower.transform.position - transform.position).normalized;
-                float newPullForce = Mathf.Clamp(pullForce / distance, 20, 50);
-                rb2d.AddForce(pullDirection * newPullForce);
-
-                rb2d.angularVelocity = -rotateSpeed / distance;
-                isPulled = true;
+                if(Input.GetKey(KeyCode.X))
+                {
+                    movePlayer(-rotateSpeed);
+                }
+                
             }
         }
 
-
-        if (Input.GetKeyUp(KeyCode.Z))
+        if (Input.GetKeyUp(KeyCode.Z) || Input.GetKeyUp(KeyCode.X))
         {
+            rb2d.angularVelocity = 0.0f;
             isPulled = false;
         }
 
@@ -133,6 +144,19 @@ public class PlayerController : MonoBehaviour
             rb2d.velocity = -transform.up * moveSpeed;
             rb2d.angularVelocity = 0f;
         } */
+    }
+
+    private void movePlayer(float tempRotateSpeed)
+    {
+            float distance = Vector2.Distance(transform.position, hookedTower.transform.position);
+
+            //Gravitation toward tower
+            Vector3 pullDirection = (hookedTower.transform.position - transform.position).normalized;
+            float newPullForce = Mathf.Clamp(pullForce / distance, 20, 50);
+            rb2d.AddForce(pullDirection * newPullForce);
+            onRotationSpeed += tempRotateSpeed;
+            rb2d.angularVelocity = -onRotationSpeed / distance;
+            isPulled = true;
     }
 
 }
