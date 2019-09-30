@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
     public GameObject HookedTower{
         get{return hookedTower;}
     }
+    public GameObject ClosestTower{
+        get{return closestTower;}
+    }
     public void setHookedTower(GameObject tower)
     {
         hookedTower = tower;
@@ -102,10 +105,16 @@ public class PlayerController : MonoBehaviour
         if ((Input.GetKey(KeyCode.Z) || (Input.GetKey(KeyCode.X))) && !isPulled)
         {
             Debug.Log("Z Pressed, hooking the object ...");
+
+            /*
+            Choosing closestTower automatically and "hook" the player to tower
             if (closestTower != null && hookedTower == null)
             {
                 hookedTower = closestTower;
             }
+             */
+
+
             if (hookedTower)
             {
                 if(Input.GetKey(KeyCode.Z))

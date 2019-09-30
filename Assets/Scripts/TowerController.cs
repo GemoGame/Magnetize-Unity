@@ -12,14 +12,18 @@ public class TowerController : MonoBehaviour
         currentColor = this.gameObject.GetComponent<SpriteRenderer>().color;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void OnMouseDown()
     {
+
         player.setHookedTower(this.gameObject);
+        currentColor = Color.green;
+        this.gameObject.GetComponent<SpriteRenderer>().color = currentColor;
+    }
+
+    void OnMouseUp()
+    {
+        player.setHookedTower(null);
+        currentColor = Color.white;
+        this.gameObject.GetComponent<SpriteRenderer>().color = currentColor;
     }
 }

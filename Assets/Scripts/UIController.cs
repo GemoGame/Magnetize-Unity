@@ -33,6 +33,7 @@ public class UIController : MonoBehaviour
     }
     public void endGame()
     {
+        Time.timeScale = 0;
         pausePanel.SetActive(true);
         resumeBtn.SetActive(false);
         levelClearTxt.SetActive(true);
